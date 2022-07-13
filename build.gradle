@@ -33,6 +33,7 @@ dependencies {
 
     //DB
     runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'com.h2database:h2'
 
     // Swagger
     implementation("io.springfox:springfox-swagger-ui:2.9.2")
@@ -40,6 +41,7 @@ dependencies {
 
     // jwt
     implementation('com.auth0:java-jwt:3.19.2') // oauth
+    implementation('io.jsonwebtoken:jjwt:0.9.1') // okta
 
 
 

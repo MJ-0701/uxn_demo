@@ -1,4 +1,4 @@
-package com.example.uxn_demo.doamain.user.config;
+package com.example.uxn_demo.doamain.user.config.jwt.oauth;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.uxn_demo.doamain.user.domain.User;
@@ -29,7 +29,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     public JWTLoginFilter(AuthenticationManager authenticationManager, UserService userService){
         super(authenticationManager);
         this.userService = userService;
-        setFilterProcessesUrl("/api/v1/user/login/*");
+//        setFilterProcessesUrl("/api/v1/user/login/*");
 
     }
 
@@ -67,7 +67,6 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
                                              FilterChain chain,
                                              Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
-
         response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer"); // 인증 테스트 -> KEY : Authorization Value : Bearer + 토큰 값.
         response.setHeader("auth_token", JWTUtil.makeAuthToken(user));
         response.setHeader("refresh_token", JWTUtil.makeRefreshToken(user));

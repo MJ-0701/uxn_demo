@@ -1,5 +1,7 @@
 package com.example.uxn_demo.doamain.user.web.controller;
 
+import com.example.uxn_demo.doamain.user.config.jwt.oauth.JWTUtil;
+import com.example.uxn_demo.doamain.user.config.jwt.okta.JwtTokenProvider;
 import com.example.uxn_demo.doamain.user.domain.User;
 import com.example.uxn_demo.doamain.user.service.UserService;
 import com.example.uxn_demo.doamain.user.web.dto.req.UserLoginReqDto;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginApiController {
     private final UserService userService;
 
+    private final JwtTokenProvider jwtTokenProvider;
+
     @PostMapping("/web-login")
     public ResponseEntity<User> webLogin(@RequestBody UserLoginReqDto loginReqDto){
         return ResponseEntity.ok(userService.findByUserIdAndPassword(loginReqDto.getUserId(), loginReqDto.getPassword()));
@@ -24,13 +28,43 @@ public class LoginApiController {
 
     @PostMapping("/mobile-login")
     public ResponseEntity<User> mobileLogin(@RequestBody UserLoginReqDto loginReqDto){
-        return ResponseEntity.ok(userService.findByUserIdAndPassword(loginReqDto.getUserId(), loginReqDto.getPassword()));
+        return ResponseEntity.ok(userService.findByUserIdAndPassword(loginReqDto.getUserId(), loginReqDto.getPassword())); // local storage 에 저장
+    }
+
+
+    @PostMapping("/make-token")
+    public ResponseEntity<String> makeToken(@RequestBody UserLoginReqDto loginReqDto){
+
+        User user = userService.findByUserIdAndPassword(loginReqDto.getUserId(), loginReqDto.getPassword());
+        String authToken = JWTUtil.makeAuthToken(user);
+
+        return ResponseEntity.ok().body(authToken); // 토큰 직접 발급
+    }
+
+    @PostMapping("/generate-token")
+    public ResponseEntity<UserTokenInfo> generateToken(@RequestBody UserLoginReqDto loginReqDto){
+        User user = userService.findByUserIdAndPassword(loginReqDto.getUserId(), loginReqDto.getPassword());
+        return ResponseEntity.ok().body(UserTokenInfo
+                .builder()
+                .authToken(JWTUtil.makeAuthToken(user))
+                .refreshToken(JWTUtil.makeRefreshToken(user))
+                .build());
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<String> refreshToken(@RequestBody UserTokenInfo userTokenInfo){
-        String refreshToken = userTokenInfo.getRefreshToken();
-        return ResponseEntity.ok(refreshToken);
+    public ResponseEntity<UserTokenInfo> refreshToken(@RequestBody UserTokenInfo tokenInfo){
 
+        return ResponseEntity.ok().body(UserTokenInfo
+                .builder()
+                .refreshToken(tokenInfo.getRefreshToken())
+                .build());
+
+
+    }
+
+    @PostMapping("/make-auth-token")
+    public ResponseEntity<String> login(@RequestBody UserLoginReqDto reqDto){
+        User user = userService.findByUserIdAndPassword(reqDto.getUserId(), reqDto.getPassword());
+        return ResponseEntity.ok(jwtTokenProvider.createToken(user.getUserId(), user.getRole()));
     }
 }

@@ -69,16 +69,23 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public User findByUserIdAndPassword(String id, String password){
 
         return userRepository.findByUserIdAndPassword(id, password).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
     }
 
+    @Transactional(readOnly = true)
     public UserInfoResDto findByIdx(Long idx){
         User user = userRepository.findById(idx).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
         return new UserInfoResDto(user);
 
+    }
+
+    @Transactional(readOnly = true)
+    public UserInfoResDto findByUserId(String id){
+        User user = userRepository.findByUserId(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+        return new UserInfoResDto(user);
     }
 
 }

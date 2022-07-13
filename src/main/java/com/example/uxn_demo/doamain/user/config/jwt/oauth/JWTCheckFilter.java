@@ -1,4 +1,4 @@
-package com.example.uxn_demo.doamain.user.config;
+package com.example.uxn_demo.doamain.user.config.jwt.oauth;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.uxn_demo.doamain.user.domain.User;

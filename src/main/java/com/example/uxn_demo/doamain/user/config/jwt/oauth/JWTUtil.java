@@ -1,4 +1,4 @@
-package com.example.uxn_demo.doamain.user.config;
+package com.example.uxn_demo.doamain.user.config.jwt.oauth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -18,10 +18,12 @@ public class JWTUtil {
 
 //    private static final long REFRESH_TIME = 2;
 
+
     // 토큰 생성
     public static String makeAuthToken(User user){
         return JWT.create()
-                .withSubject(user.getUserId()) // user_id 만 넣어서 생성
+                .withSubject(user.getUserId()) // user_id
+                .withClaim("idx",user.getIdx()) // 회원 정보를 가져오기 위해서 index 값도 넣어준다.
                 .withClaim("exp", Instant.now().getEpochSecond()+AUTH_TIME) // 토큰 유효 시간 -> Date 클래스 사용 안하고
                 .sign(ALGORITHM);
     }
@@ -30,6 +32,7 @@ public class JWTUtil {
     public static String makeRefreshToken(User user){
         return JWT.create()
                 .withSubject(user.getUserId())
+                .withClaim("idx",user.getIdx())
                 .withClaim("exp", Instant.now().getEpochSecond()+REFRESH_TIME)
                 .sign(ALGORITHM);
     }

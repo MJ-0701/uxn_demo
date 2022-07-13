@@ -22,5 +22,10 @@ public class UserInfoApiController {
         return ResponseEntity.ok(userService.findByIdx(id));
     }
 
+    @GetMapping("/search/{userId}")
+    public ResponseEntity<UserInfoResDto> getUserInfoByUserId(@PathVariable String userId){
+        return ResponseEntity.ok(userService.findByUserId(userId));
+    }
+
 
 }
